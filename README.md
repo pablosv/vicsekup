@@ -10,17 +10,25 @@ In the Vicsek model birds, or boids, align with the average flying direction of 
 Calculating near neighbors of moving birds is in principle a slow process, as we have to check all possible pairs. A naive search thus scales as $N^2$. To avoid this here we break the simlulation space in squares of size $r$ and keep track of the birds in each box. The neighbors are only calculated for neighboring boxes, which makes the process scale as $\sim N$.
 
 # Running 
-To run a simulation we have to choose a parameter set, create a flock, and then run the simulation. For example:
+To run a simulation we have to choose a parameter set, create a  simulation, and  run it. For example:
 
 ```python
-import vicsek as mivic
-bandada = mivic.flock(parametros)
-vic_simu =mivic.simulate(bandada)
+import vicsek as vic
+parametros = vic.param(T=3)
+vic_simu   = vic.simulate(parametros)
 vic_simu.run()
 ```
 
-Alternatively we could have done
+Alternatively we could have done:
+
 ```python
-mivic.simulate(bandada).run()
+vic.simulate(parametros).run()
+```
+
+This structure makes it easy to run a series. For example, we can simulate a noise series with ten items by doing:
+
+```python
+noise_param=[ vic.param(n=1.-1./(1+t)) for t in range(10)]
+[vic.simulate(noise_param[t]).run() for t in range(10)]
 ```
 

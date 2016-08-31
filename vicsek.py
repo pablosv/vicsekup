@@ -5,13 +5,11 @@ from math import pi, cos, sin, atan2, fabs, floor, ceil, sqrt
 def dist(p1, p2):
   return sqrt(fabs(p1[0]-p2[0])**2 + fabs(p1[1]-p2[1])**2)
 
-def sign(v):
-  return v/abs(v)
-
 class bucket_grid:
-  """Fixed radius nearest neighbour search using a grid of buckets of size r.
-     Width and height are needed to wrap around (periodic boundary conditions).
-    """
+  """
+  Fixed radius nearest neighbour search using a grid of buckets of size r.
+  Width and height are needed to wrap around (periodic boundary conditions).
+  """
   def __init__(self, points, param):
     self.param = param
     self.n = self.param.width / self.param.r # # of horizontal buckets
@@ -121,8 +119,9 @@ class simulate:
   """
   Run the iterative loop
   """
-  def __init__(self, flock):
-    self.flock = flock
+  def __init__(self, param):
+    self.param = param
+    self.flock = flock(self.param)
 
   def run(self):
-    [ self.flock.move() for t in range(self.flock.param.T)] 
+    [ self.flock.move() for t in range(self.param.T)]
