@@ -1,5 +1,5 @@
 # Introduction
-Simulation of the vicsek model. The goal is to learn good coding practices, such as how to use git, github, and create a proper program structure.
+Simulation of the vicsek model. The goal is to learn good coding practices, such as how to use git, github, and create a proper program structure. We will also compare how an object oriented method compares to a numpy array method.
 
 For example, we will learn how to upload changes, and how to download changes (made by someone else, myself from another computer, or on the web).
 
