@@ -39,7 +39,7 @@ class bucket_grid:
     #
     return ( int(floor(p[0]/self.width*self.n)), int(floor(p[1]/self.height*self.m)) )
 
-  def neighbours(self, p, r):
+  def neighbours(self, p):
     # position of the central bucket
     i, j = self.get_index(p)
     # this is the number of adjacent buckets we need to check
