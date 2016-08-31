@@ -21,17 +21,22 @@ class bucket_grid:
      Width and height are needed to wrap around (periodic boundary conditions).
     """
   def __init__(self, points, width, height, n, m):
-    self.width = width
-    self.height = height
-    self.n = n
-    self.m = m
+    self.width = width # width of the whole space
+    self.height = height # height of the whole space
+    self.n = n # # of horizontal buckets, hsize of buck= width/n
+    self.m = m # # of vertical buckets, vsize of buck= height/m 
     # here are your buckets (dict)
     self.buckets = {}
-    # put all points into them
+    # put all points into them. this is a dictionary, where the index
+    # are the coordinates of the buckets, and the values are arrays
+    # of xy coordinates corresponding to the points in that bucket
     for p in points:
       self.buckets.setdefault(self.get_index(p), []).append(p)
 
+  # this gives a list of [i,j] coordinates for each point, which
+  # corresponds to the bucket they are in  
   def get_index(self, p):
+    #
     return ( int(floor(p[0]/self.width*self.n)), int(floor(p[1]/self.height*self.m)) )
 
   def neighbours(self, p, r):
@@ -57,7 +62,6 @@ class bird:
   """
   def __init__(self, app, pos, phi, speed):
     self.pos  = pos
-    self.tail  = [ copy.deepcopy(self.pos) ]
     self.phi   = phi
     self.speed = speed
     self.size  = 7
@@ -71,7 +75,8 @@ class bird:
 
   def move(self):
     self.pos = map(sum, zip(self.pos, [ self.speed*cos(self.phi), self.speed*sin(self.phi) ]))
-    # periodic boundary conditions
+    # periodic boundary conditions, since width is always bigger than
+    # the position, %(mod) gives either the original number or 103-100=3.
     self.pos = [ self.pos[0]%app.width, self.pos[1]%app.height ] 
 
 class flock:
@@ -131,6 +136,7 @@ class game:
     self.flock = flock(self, self.N, self.r, self.n, self.v)
 
   def run(self):
+    # replace by for loop
     running = True
 
     while running:
@@ -147,9 +153,4 @@ def test_bucket():
   neighbours = bnn.neighbours(points[0], 10)
 
   print points[0]
-  print neighbours
-
-if __name__ == "__main__":
-  #http://stackoverflow.com/questions/419163/what-does-if-name-main-do
-  app = game() 
-  app.run()
+  print neighbours  
