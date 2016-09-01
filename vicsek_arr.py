@@ -67,7 +67,7 @@ class flock:
       self.birds[k,2] = np.arctan2(sin_tot, cos_tot) + self.param.n/2.*(1-2.*np.random.rand())
 
       # calculate new position after boost with periodic bc
-      boost = self.param.speed*[ np.cos(self.birds[k,2]),np.sin(self.birds[k,2]) ]
+      boost = self.param.speed* np.array([ np.cos(self.birds[k,2]),np.sin(self.birds[k,2]) ])
       self.birds[k,0:2] = (self.birds[k,0:2]+0*boost)%[self.param.width,self.param.width]
 
     # global update
