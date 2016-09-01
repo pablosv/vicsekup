@@ -74,7 +74,7 @@ class flock:
   def __init__(self, param):
     self.param = param
 
-    # create birds. THIS COULD BE A LIST WITH A MILLION CLASSES, SLOWWW!!!
+    # create birds
     self.birds = [ bird(self.param, # can change to param?
                         [ random.random()*self.param.width, random.random()*self.param.height ], 
                         2*pi*random.random() 

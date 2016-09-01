@@ -25,8 +25,8 @@ class bucket_grid:
     # position of the central bucket
     i, j = self.get_index(b)
     # this is the number of adjacent buckets we need to check
-    cx = int(np.ceil(float(self.param.r)/self.param.width*self.n))
-    cy = int(np.ceil(float(self.param.r)/self.param.height*self.m))
+    cx = np.int(np.ceil(np.float(self.param.r)/self.param.width*self.n))
+    cy = np.int(np.ceil(np.float(self.param.r)/self.param.height*self.m))
     neighbours = []
     # check all neighbouring buckets
     for f in range(-cx, 1+cx):
@@ -36,7 +36,7 @@ class bucket_grid:
           lambda q: np.dot(b[0:2]-q[0:2], b[0:2]-q[0:2]) < self.param.r2,
           self.buckets.setdefault( ( (i+f)%self.n, (j+g)%self.m ), [])
           )
-    return np.array(neighbours) # is there a numpy way of doing this above?
+    return np.array(neighbours)
 
 class flock:
   """
@@ -57,19 +57,19 @@ class flock:
     grid = bucket_grid(self.birds_old, self.param)
 
     # update the angles
-    for k in range(self.param.N):
-      sin_tot = 0.
-      cos_tot = 0.
+    for k in np.arange(self.param.N):
       # loop over neighbours
-      neighbours = grid.neighbours(self.birds_old[k]) 
-      for n in neighbours: # REMOVE THIS LOOP, ACT ON ARRAY INSTEAD
-          sin_tot += np.sin(n[2])#np.sin(a).sum()
-          cos_tot += np.cos(n[2])
-      # update angle // WHY CAN'T PUT LINEJUMP AFTER? ALSO, REDERIVE...
+      neighbours = grid.neighbours(self.birds_old[k])
+      sin_tot    = np.sin(neighbours[:,2]).sum() 
+      cos_tot    = np.sin(neighbours[:,2]).sum()
+
+      # update angle
       self.birds[k,2] = np.arctan2(sin_tot, cos_tot) + self.param.n/2.*(1-2.*np.random.rand())
-      # update position
-      self.birds[k,0:2] = np.array([ self.param.speed*np.cos(self.birds[k,2])%self.param.width,
-                                     self.param.speed*np.sin(self.birds[k,2])%self.param.height ])
+
+      # calculate new position after boost with periodic bc
+      boost = self.param.speed*[ np.cos(self.birds[k,2]),np.sin(self.birds[k,2]) ]
+      self.birds[k,0:2] = (self.birds[k,0:2]+0*boost)%[self.param.width,self.param.width]
+
     # global update
     self.birds_old = self.birds
 
