@@ -1,12 +1,5 @@
 import random
 import numpy as np
-from math import atan2, fabs, floor, ceil, sqrt
-
-# USE ONLY NUMPY IF POSSIBLE
-
-# distance
-def dist(p1, p2):
-  return sqrt(fabs(p1[0]-p2[0])**2 + fabs(p1[1]-p2[1])**2)
 
 class bucket_grid:
   """
@@ -25,22 +18,22 @@ class bucket_grid:
  
   def get_index(self, b):
     # returns bucket coordinates of point
-    return ( int(floor(b[0]/self.param.width*self.n)),
-             int(floor(b[1]/self.param.height*self.m)) )
+    return ( int(np.floor(b[0]/self.param.width*self.n)),
+             int(np.floor(b[1]/self.param.height*self.m)) )
 
   def neighbours(self, b):
     # position of the central bucket
     i, j = self.get_index(b)
     # this is the number of adjacent buckets we need to check
-    cx = int(ceil(float(self.param.r)/self.param.width*self.n))
-    cy = int(ceil(float(self.param.r)/self.param.height*self.m))
+    cx = int(np.ceil(float(self.param.r)/self.param.width*self.n))
+    cy = int(np.ceil(float(self.param.r)/self.param.height*self.m))
     neighbours = []
     # check all neighbouring buckets
     for f in range(-cx, 1+cx):
       for g in range(-cy, 1+cy):
         # add points
         neighbours += filter(
-          lambda q: dist(b, q) < self.param.r,
+          lambda q: np.dot(b[0:2]-q[0:2], b[0:2]-q[0:2]) < self.param.r2,
           self.buckets.setdefault( ( (i+f)%self.n, (j+g)%self.m ), [])
           )
     return np.array(neighbours) # is there a numpy way of doing this above?
@@ -70,10 +63,10 @@ class flock:
       # loop over neighbours
       neighbours = grid.neighbours(self.birds_old[k]) 
       for n in neighbours: # REMOVE THIS LOOP, ACT ON ARRAY INSTEAD
-          sin_tot += np.sin(n[2])
+          sin_tot += np.sin(n[2])#np.sin(a).sum()
           cos_tot += np.cos(n[2])
-      # update angle // WHY CAN'T PUT LINEJUMP AFTER +
-      self.birds[k,2] = atan2(sin_tot, cos_tot) + self.param.n/2.*(1-2.*np.random.rand())
+      # update angle // WHY CAN'T PUT LINEJUMP AFTER? ALSO, REDERIVE...
+      self.birds[k,2] = np.arctan2(sin_tot, cos_tot) + self.param.n/2.*(1-2.*np.random.rand())
       # update position
       self.birds[k,0:2] = np.array([ self.param.speed*np.cos(self.birds[k,2])%self.param.width,
                                      self.param.speed*np.sin(self.birds[k,2])%self.param.height ])
@@ -91,6 +84,7 @@ class param:
     self.N = N # number of birds
     self.T = T # total time steps
     self.r = r # interaction radius
+    self.r2= r*r # squared radius
     self.n = n # noise strength
     self.speed = speed # linear speed of birds
     self.dt = dt # time interval for storage
