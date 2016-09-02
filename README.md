@@ -25,10 +25,32 @@ Alternatively we could have done:
 vic.simulate(parametros).run()
 ```
 
+## Running several simulations
 This structure makes it easy to run a series. For example, we can simulate a noise series with ten items by doing:
 
 ```python
 noise_param=[ vic.param(n=1.-1./(1+t)) for t in range(10)]
 [vic.simulate(noise_param[t]).run() for t in range(10)]
+```
+
+## Comparative timing
+We can compare the speed of the array and object oriented methods in the following way:
+
+```python
+import vicsek_arr as vicarr
+import vicsek_obj as vicobj
+parametros = vicarr.param(T=10,dt=1,N=100)
+time vicarr.simulate(parametros).run()
+time vicobj.simulate(parametros).run()
+```
+
+Similarly, we can time different parts of the code, for example, how fast are the indeces retrieved when birds are objects?
+```python
+pajobj = vicobj.flock(parametros).birds
+time vicobj.bucket_grid(pajobj,parametros).get_index(pajobj[0])
+```
+And similarly for arrays. Other processes to explore are, for example, the calculation of neighbours
+```python
+time vicobj.bucket_grid(pajobj,parametros).neighbours(pajobj[2])
 ```
 

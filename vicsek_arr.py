@@ -18,8 +18,8 @@ class bucket_grid:
  
   def get_index(self, b):
     # returns bucket coordinates of point
-    return ( int(np.floor(b[0]/self.param.width*self.n)),
-             int(np.floor(b[1]/self.param.height*self.m)) )
+    return ( np.int(np.floor(b[0]/self.param.width*self.n)),
+             np.int(np.floor(b[1]/self.param.height*self.m)) )
 
   def neighbours(self, b):
     # position of the central bucket
