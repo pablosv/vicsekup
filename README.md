@@ -7,13 +7,13 @@ For example, we will learn how to upload changes, and how to download changes (m
 In the Vicsek model birds, or boids, align with the average flying direction of the neighbors in a range $r$. Birds move at a constant speed $v$ and are subject to rotational diffusion, characterized by the noise term $\eta$. This noise is assumed, for simplicity, to be completely uncorrelated in time and space: <\eta(\vec{r},t)\eta(\vec{r}',t')>=\delta
 
 # Algorithm
-Calculating near neighbors of moving birds is in principle a slow process, as we have to check all possible pairs. A naive search thus scales as $N^2$. To avoid this here we break the simlulation space in squares of size $r$ and keep track of the birds in each box. The neighbors are only calculated for neighboring boxes, which makes the process scale as $\sim N$.
+Calculating near neighbors of moving birds is in principle a slow process, as we have to check all possible pairs. A naive search thus scales as $N^2$. To avoid this here we break the simlulation space in squares of size $r$ and create a dictionary of the birds in each box. The neighbors are only calculated for neighboring boxes, which makes the process scale as $\sim N$. The price to pay is the need of a complex structure as the dictionary, as opposed to a simple NxN adjacency matrix.
 
 # Running 
-To run a simulation we have to choose a parameter set, create a  simulation, and  run it. For example:
+To run a simulation we have to choose a parameter set, create a  simulation, and  run it. For example, to try the array method:
 
 ```python
-import vicsek as vic
+import vicsek_arr as vic
 parametros = vic.param(T=3)
 vic_simu   = vic.simulate(parametros)
 vic_simu.run()

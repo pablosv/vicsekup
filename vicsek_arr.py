@@ -100,8 +100,8 @@ class simulate:
   def run(self):
     for t in range(self.param.T):
       self.flock.move()
-      if t==0: print('save initial flock with parameters')
-      if t%self.param.dt==0: print('store flock positions and angles') #
+      if t==0: print('save initial flock with parameters: not implemented')
+      if t%self.param.dt==0: print('store flock positions and angles:not implemented') #
 
 class analysis:
   """
