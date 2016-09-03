@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
 class bucket_grid:
   """
@@ -64,7 +65,7 @@ class flock:
       cos_tot    = np.sin(neighbours[:,2]).sum()
 
       # update angle
-      self.birds[k,2] = np.arctan2(sin_tot, cos_tot) + self.param.n/2.*(1-2.*np.random.rand())
+      self.birds[k,2] = np.arctan2(sin_tot, cos_tot) + np.pi*self.param.n/2.*(1-2.*np.random.rand())
 
       # calculate new position after boost with periodic bc
       boost = self.param.speed* np.array([ np.cos(self.birds[k,2]),np.sin(self.birds[k,2]) ])
@@ -78,7 +79,7 @@ class param:
   Parameters of the 
   """
   def __init__(self, width = 512, height = 512, N = 250, T=100, r = 10,
-    n = 0.5, speed = 10, dt = 10):
+    n = 0.5, speed = 10, dt = 10, dN = 10): # band sin chate review, 1024x256 at n=0.42 and N=50000, v?
     self.width = width # box width
     self.height = height # box height
     self.N = N # number of birds
@@ -88,6 +89,7 @@ class param:
     self.n = n # noise strength
     self.speed = speed # linear speed of birds
     self.dt = dt # time interval for storage
+    self.dN = dN # every how many plot a bird
 
 class simulate:
   """
@@ -101,7 +103,7 @@ class simulate:
     for t in range(self.param.T):
       self.flock.move()
       if t==0: print('save initial flock with parameters: not implemented')
-      if t%self.param.dt==0: print('store flock positions and angles:not implemented') #
+      if t%self.param.dt==0: plotter(self.flock.birds,self.param).flockplot()
 
 class analysis:
   """
@@ -114,5 +116,19 @@ class plotter:
   """
   Make movie of the flock, also plot correlations and so on...
   """
-  # def frame
-  # def movie
+  def __init__(self, birds, param):
+    self.birds = birds
+    self.param = param
+  
+  def flockplot(self):
+    # calculate the velocity of each bird
+    flockspeed = np.transpose(np.array([np.cos(self.birds[::self.param.dN,2]),
+                                        np.sin(self.birds[::self.param.dN,2])]))
+    
+    # create the vector field
+    x ,y ,u ,v = np.transpose(np.concatenate((self.birds[::self.param.dN,0:2],
+                                              flockspeed),1))
+    
+    # plot
+    plt.quiver(x,y,u,v)
+    plt.show()
