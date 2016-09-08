@@ -1,6 +1,9 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import pickle
+
 
 class bucket_grid:
   """
@@ -79,7 +82,7 @@ class param:
   Parameters of the 
   """
   def __init__(self, width = 512, height = 512, N = 250, T=100, r = 10,
-    n = 0.5, speed = 10, dt = 10, dN = 10): # band sin chate review, 1024x256 at n=0.42 and N=50000, v?
+    n = 0.5, speed = 10, dt = 10, dN = 10, path=''): # band sin chate review, 1024x256 at n=0.42 and N=50000, v?
     self.width = width # box width
     self.height = height # box height
     self.N = N # number of birds
@@ -90,6 +93,8 @@ class param:
     self.speed = speed # linear speed of birds
     self.dt = dt # time interval for storage
     self.dN = dN # every how many plot a bird
+    self.path = './DATA/w'+str(self.width)+'h'+str(self.height)+'N'+str(self.N)+'T'+str(self.T)+'r'+str(self.r)+'n'+str(self.n)+'v'+str(self.speed)
+
 
 class simulate:
   """
@@ -99,11 +104,22 @@ class simulate:
     self.param = param
     self.flock = flock(self.param)
 
+    # store parameters
+    os.makedirs(self.param.path) # if path exist, add _1, if it exists, _2, ...
+    file_param = open(self.param.path+'/parameters.pkl','wb')
+    pickle.dump(self.param,file_param)
+    file_param.close()  
+
   def run(self):
+    # run iterative loop storing birds every dt
+    file_birds = open(self.param.path+'/birds.npz','w')
     for t in range(self.param.T):
       self.flock.move()
-      if t==0: print('save initial flock with parameters: not implemented')
-      if t%self.param.dt==0: plotter(self.flock.birds,self.param).flockplot()
+      if t%self.param.dt==0: np.savez(file_birds,self.flock.birds) 
+      # proper way: http://stackoverflow.com/questions/30376581/save-numpy-array-in-append-mode
+
+    # close storage files
+    file_birds.close()
 
 class analysis:
   """
@@ -120,13 +136,12 @@ class plotter:
     self.birds = birds
     self.param = param
   
-  def flockplot(self):
+  def flockplot(self):#plotter(self.flock.birds,self.param).flockplot()
     # calculate the velocity of each bird
     flockspeed = np.transpose(np.array([np.cos(self.birds[::self.param.dN,2]),
-                                        np.sin(self.birds[::self.param.dN,2])]))
-    
+                                        np.sin(self.birds[::self.param.dN,2])]))  
     # create the vector field
-    x ,y ,u ,v = np.transpose(np.concatenate((self.birds[::self.param.dN,0:2],
+    x, y, u, v = np.transpose(np.concatenate((self.birds[::self.param.dN,0:2],
                                               flockspeed),1))
     
     # plot
