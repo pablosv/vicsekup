@@ -105,7 +105,8 @@ class simulate:
     self.flock = flock(self.param)
 
     # store parameters
-    os.makedirs(self.param.path) # if path exist, add _1, if it exists, _2, ...
+    while os.path.exists(self.param.path): self.param.path+='_1'
+    os.makedirs(self.param.path)
     file_param = open(self.param.path+'/parameters.pkl','wb')
     pickle.dump(self.param,file_param)
     file_param.close()  
