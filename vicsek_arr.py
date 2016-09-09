@@ -113,12 +113,11 @@ class simulate:
 
   def run(self):
     # run iterative loop storing birds every dt
-    file_birds = open(self.param.path+'/birds.npz','w')
+    file_birds = open(self.param.path+'/birds.npz','a')
     for t in range(self.param.T):
       self.flock.move()
-      if t%self.param.dt==0: np.savez(file_birds,self.flock.birds) 
-      # proper way: http://stackoverflow.com/questions/30376581/save-numpy-array-in-append-mode
-
+      if t%self.param.dt==0: np.save(file_birds,self.flock.birds) 
+      
     # close storage files
     file_birds.close()
 
